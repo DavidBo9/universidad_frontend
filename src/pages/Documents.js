@@ -123,22 +123,53 @@ const Documents = () => {
   };
 
   // Manejar envío del formulario
-  const handleSubmit = async () => {
+// Ejemplo de cómo actualizar el formulario en el frontend (React)
+// En el componente Documents.js, donde manejas la creación de documentos
+
+// Modificar el handleSubmit
+const handleSubmit = async () => {
     try {
-      if (editMode) {
-        await documentoService.updateDocumento(currentDocument._id, formData);
-      } else {
-        // Añadir autor_id
-        const documentData = {
-          ...formData,
-          autor_id: user.id
+      // Mapear el tipo seleccionado a uno de los tipos permitidos
+      const tipoMapeado = {
+        'guia': 'tarea',
+        'instructivo': 'tarea',
+        'reglamento': 'tarea',
+        'material': 'tarea',
+        'examen': 'examen',
+        'tarea': 'tarea'
+      }[formData.tipo] || 'tarea';
+      
+      // Convertir el contenido a un objeto JSON
+      const contenidoObj = {
+        texto: formData.contenido,
+        formato: 'texto_plano'
+      };
+      
+      // Construir el objeto relacionado_con correctamente
+      let relacionadoCon = null;
+      if (formData.relacionado_con.tipo && formData.relacionado_con.id) {
+        relacionadoCon = {
+          tipo: formData.relacionado_con.tipo,
+          id: parseInt(formData.relacionado_con.id, 10)
         };
-        await documentoService.createDocumento(documentData);
       }
+      
+      // Crear el objeto de documento que cumple con el esquema
+      const documentoData = {
+        titulo: formData.titulo,
+        tipo: tipoMapeado,
+        contenido: contenidoObj,
+        relacionado_con: relacionadoCon,
+        etiquetas: formData.etiquetas
+      };
+      
+      // Enviar al backend
+      const response = await documentoService.createDocumento(documentoData);
+      
       setOpenDialog(false);
       loadDocuments();
     } catch (error) {
-      setError(error.message || `Error al ${editMode ? 'actualizar' : 'crear'} documento`);
+      setError(error.message || 'Error al crear documento');
     }
   };
 
