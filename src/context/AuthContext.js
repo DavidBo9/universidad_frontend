@@ -40,41 +40,16 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Función para iniciar sesión
-  const login = async (username, password) => {
+  // src/context/AuthContext.js - Actualizar función de login
+const login = async (username, password) => {
     try {
       setError(null);
       setLoading(true);
       
-      // TEMPORAL: Simular login exitoso para pruebas
-      console.log('Login simulado:', username);
-      const mockUser = {
-        id: 1,
-        username: username,
-        role: {
-          id: 1,
-          name: 'admin'
-        },
-        permisos: [
-          'usuarios.ver', 'usuarios.crear', 'usuarios.editar', 'usuarios.eliminar',
-          'cursos.ver', 'cursos.crear', 'cursos.editar', 'cursos.eliminar',
-          'inscripciones.ver', 'inscripciones.crear', 'inscripciones.editar', 'inscripciones.eliminar',
-          'calificaciones.ver', 'calificaciones.crear', 'calificaciones.editar',
-          'reportes.ver', 'reportes.crear',
-          'auditoria.ver',
-          'configuracion.ver', 'configuracion.editar'
-        ]
-      };
-      
-      localStorage.setItem('token', 'mock-token-12345');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      
-      return mockUser;
-      
-      // Comentado para pruebas
-      // const loggedUser = await apiLogin(username, password);
-      // setUser(loggedUser);
-      // return loggedUser;
+      // Usar API real en lugar de simulación
+      const loggedUser = await apiLogin(username, password);
+      setUser(loggedUser);
+      return loggedUser;
     } catch (error) {
       setError(error.message || 'Error al iniciar sesión');
       throw error;
