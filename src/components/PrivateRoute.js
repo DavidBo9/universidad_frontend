@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import LoadingScreen from './LoadingScreen';
 
 // Componente para proteger rutas privadas
-const PrivateRoute = ({ children, requiredPermission, allowedRoles = [] }) => {
-  const { isAuthenticated, loading, hasPermission, user } = useAuth();
+const PrivateRoute = ({ children, requiredPermission }) => {
+  const { isAuthenticated, loading, hasPermission } = useAuth();
   const location = useLocation();
   
   // Si está cargando, mostrar pantalla de carga
@@ -20,11 +20,6 @@ const PrivateRoute = ({ children, requiredPermission, allowedRoles = [] }) => {
   
   // Si se requiere un permiso específico y el usuario no lo tiene
   if (requiredPermission && !hasPermission(requiredPermission)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-  
-  // Si hay roles permitidos específicos y el usuario no tiene el rol adecuado
-  if (allowedRoles.length > 0 && user && user.rol && !allowedRoles.includes(user.rol)) {
     return <Navigate to="/unauthorized" replace />;
   }
   

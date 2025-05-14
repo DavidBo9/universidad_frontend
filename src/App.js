@@ -1,10 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 // Contexto de autenticación
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 
 // Componentes de autenticación
 import PrivateRoute from './components/PrivateRoute';
@@ -22,17 +22,6 @@ import Courses from './pages/Courses';
 import Students from './pages/Students';
 import Documents from './pages/Documents';
 import NotFound from './pages/NotFound';
-
-// Componente para redireccionar según el rol
-const RedirectBasedOnRole = () => {
-  const { user } = useAuth();
-  
-  if (user && user.rol === 'estudiante') {
-    return <Navigate to="/courses" replace />;
-  }
-  
-  return <Navigate to="/dashboard" replace />;
-};
 
 // Crear tema personalizado
 const theme = createTheme({
@@ -63,7 +52,9 @@ function App() {
             {/* Rutas públicas */}
             <Route path="/login" element={<Login />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
-              {/* Rutas privadas dentro del dashboard */}            <Route
+            
+            {/* Rutas privadas dentro del dashboard */}
+            <Route
               path="/"
               element={
                 <PrivateRoute>
@@ -71,28 +62,15 @@ function App() {
                 </PrivateRoute>
               }
             >
-              <Route index element={<RedirectBasedOnRole />} />
-              <Route 
-                path="dashboard" 
-                element={
-                  <PrivateRoute allowedRoles={['admin', 'profesor', 'administrativo']}>
-                    <Dashboard />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="profile" 
-                element={<Profile />} 
-              />
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
               
               {/* Rutas con permisos específicos */}
               <Route
                 path="users"
                 element={
-                  <PrivateRoute 
-                    requiredPermission="usuarios.ver" 
-                    allowedRoles={['admin', 'administrativo']}
-                  >
+                  <PrivateRoute requiredPermission="usuarios.ver">
                     <Users />
                   </PrivateRoute>
                 }
@@ -110,10 +88,7 @@ function App() {
               <Route
                 path="students"
                 element={
-                  <PrivateRoute 
-                    requiredPermission="inscripciones.ver" 
-                    allowedRoles={['admin', 'profesor', 'administrativo']}
-                  >
+                  <PrivateRoute requiredPermission="inscripciones.ver">
                     <Students />
                   </PrivateRoute>
                 }

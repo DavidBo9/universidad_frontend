@@ -32,7 +32,8 @@ const drawerWidth = 240;
 
 const DashboardLayout = () => {
   const [open, setOpen] = useState(true);
-  const [anchorEl, setAnchorEl] = useState(null);  const { user, logout, hasPermission } = useAuth();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleUserMenuOpen = (event) => {
@@ -52,41 +53,12 @@ const DashboardLayout = () => {
     }
   };
 
-  // Verificar si el usuario es estudiante
-  const isEstudiante = user?.rol === 'estudiante';
-
-  // Definir elementos del menú
   const menuItems = [
-    { 
-      text: 'Dashboard', 
-      icon: <DashboardIcon />, 
-      path: '/dashboard',
-      visible: !isEstudiante
-    },
-    { 
-      text: 'Usuarios', 
-      icon: <PeopleIcon />, 
-      path: '/users',
-      visible: hasPermission('usuarios.ver') && !isEstudiante
-    },
-    { 
-      text: 'Cursos', 
-      icon: <BookIcon />, 
-      path: '/courses',
-      visible: hasPermission('cursos.ver') || isEstudiante
-    },
-    { 
-      text: 'Estudiantes', 
-      icon: <SchoolIcon />, 
-      path: '/students',
-      visible: hasPermission('inscripciones.ver') && !isEstudiante
-    },
-    { 
-      text: 'Documentos', 
-      icon: <DescriptionIcon />, 
-      path: '/documents',
-      visible: true // Todos los usuarios pueden ver documentos
-    },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Usuarios', icon: <PeopleIcon />, path: '/users' },
+    { text: 'Cursos', icon: <BookIcon />, path: '/courses' },
+    { text: 'Estudiantes', icon: <SchoolIcon />, path: '/students' },
+    { text: 'Documentos', icon: <DescriptionIcon />, path: '/documents' },
   ];
 
   return (
@@ -162,19 +134,18 @@ const DashboardLayout = () => {
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
         }}
-      >        <Toolbar />
+      >
+        <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            {menuItems
-              .filter(item => item.visible)
-              .map((item) => (
-                <ListItem key={item.text} disablePadding>
-                  <ListItemButton onClick={() => navigate(item.path)}>
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
+            {menuItems.map((item) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton onClick={() => navigate(item.path)}>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
           </List>
         </Box>
       </Drawer>

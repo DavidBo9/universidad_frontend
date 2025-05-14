@@ -19,11 +19,12 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-    const { login } = useAuth();
+  
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Redireccionar a la página anterior o al dashboard/courses según el rol
+  // Redireccionar a la página anterior o al dashboard
   const from = location.state?.from?.pathname || '/dashboard';
   
   const handleSubmit = async (e) => {
@@ -37,14 +38,8 @@ const Login = () => {
     try {
       setError('');
       setLoading(true);
-      const user = await login(username, password);
-      
-      // Redirigir a courses si es estudiante, de lo contrario a la ruta original o dashboard
-      if (user && user.rol === 'estudiante') {
-        navigate('/courses', { replace: true });
-      } else {
-        navigate(from, { replace: true });
-      }
+      await login(username, password);
+      navigate(from, { replace: true });
     } catch (error) {
       setError(error.message || 'Error al iniciar sesión');
     } finally {
